@@ -1,0 +1,173 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLIENT
+  DRIVER
+  ADMIN
+}
+
+
+enum StatusUser {
+  ACTIVE
+  INACTIVE
+}
+
+enum RequestType {
+  STANDARD
+  SPECIAL
+}
+
+enum RequestStatus {
+  OPEN
+  IN_PROGRESS
+  DONE
+}
+
+enum TaskStatus {
+  ASSIGNED
+  COMPLETED
+}
+
+model User {
+  id         String     @id @default(uuid())
+  username   String
+  email      String     @unique
+  password   String
+  role       Role
+  phone      String
+  level      Int        @default(1)
+  score      Int        @default(0)
+  createdAt  DateTime   @default(now())
+  status     StatusUser @default(INACTIVE)
+  was_online DateTime   @default(now())
+
+  profile         Profile?
+  addresses       Address[]
+  requests        Request[]
+  taskHistories   TaskHistory[]
+  ratingsGiven    Rating[]      @relation("RatingGivenByUser")
+  ratingsReceived Rating[]      @relation("RatingGivenToUser")
+  sessions        Session[]
+}
+
+model Profile {
+  id          String  @id @default(uuid())
+  userId      String  @unique
+  image       String? @default("default.png")
+  settings    Json?
+  faqAccepted Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Address {
+  id        String  @id @default(uuid())
+  userId    String
+  region    String
+  district  String?
+  lat       Float
+  lng       Float
+  ecoRating Int     @default(0)
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Request {
+  id          String        @id @default(uuid())
+  userId      String
+  type        RequestType
+  description String
+  status      RequestStatus @default(OPEN)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  user          User          @relation(fields: [userId], references: [id])
+  taskHistories TaskHistory[]
+}
+
+model TaskHistory {
+  id          String     @id @default(uuid())
+  userId      String
+  requestId   String?
+  taskDesc    String
+  status      TaskStatus
+  completedAt DateTime?
+
+  user    User     @relation(fields: [userId], references: [id])
+  request Request? @relation(fields: [requestId], references: [id])
+}
+
+model Monitoring {
+  id             String   @id @default(uuid())
+  activeDrivers  Int
+  activeRequests Int
+  completedTasks Int
+  generatedAt    DateTime @default(now())
+}
+
+model Faq {
+  id       String @id @default(uuid())
+  question String
+  answer   String
+}
+
+model Rating {
+  id       String @id @default(uuid())
+  fromUser String
+  toUser   String
+  region   String
+  score    Int
+
+  from User @relation("RatingGivenByUser", fields: [fromUser], references: [id])
+  to   User @relation("RatingGivenToUser", fields: [toUser], references: [id])
+}
+
+model Session {
+  id       String   @id @default(uuid())
+  ip       String
+  location String?
+  info     Json
+  date     DateTime @default(now())
+  user_id  String
+
+  User User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model SpecialOffer {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  image       String   @default("image.png")
+  validUntil  DateTime @default(now())
+}
+
+model PickupPoint {
+  id        String  @id @default(uuid())
+  region    String
+  district  String
+  lat       Float
+  lng       Float
+  available Boolean @default(true)
+}
+
+model Report {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  type      String // individual / general etc.
+}

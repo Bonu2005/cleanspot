@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "SpecialOffer" ALTER COLUMN "image" SET DEFAULT 'image.png',
+ALTER COLUMN "validUntil" SET DEFAULT CURRENT_TIMESTAMP;
