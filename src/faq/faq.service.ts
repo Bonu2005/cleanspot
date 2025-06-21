@@ -33,7 +33,7 @@ export class FaqService {
     try {
       let findU = await this.prisma.faq.findFirst({ where: { id } })
       if (!findU) {
-        return new NotFoundException("faq with this id not found")
+           throw new NotFoundException("faq with this id not found")
       }
       const faq = await this.prisma.faq.findUnique({ where: { id } });
       if (!faq) throw new NotFoundException('Вопрос не найден');
@@ -47,7 +47,7 @@ export class FaqService {
     try {
       let findU = await this.prisma.faq.findFirst({ where: { id } })
       if (!findU) {
-        return new NotFoundException("faq with this id not found")
+           throw new NotFoundException("faq with this id not found")
       }
       return await this.prisma.faq.update({
         where: { id },
@@ -62,7 +62,7 @@ export class FaqService {
     try {
       let findU = await this.prisma.faq.findFirst({ where: { id } })
       if (!findU) {
-        return new NotFoundException("faq with this id not found")
+           throw new NotFoundException("faq with this id not found")
       }
       return await this.prisma.faq.delete({ where: { id } });
     } catch (error) {

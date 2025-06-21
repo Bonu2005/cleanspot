@@ -14,9 +14,11 @@ import { SpecailOfferModule } from './specail-offer/specail-offer.module';
 import { PickupPointModule } from './pickup-point/pickup-point.module';
 import { ReportModule } from './report/report.module';
 import { UploadModule } from './upload/upload.module';
+import { OrderModule } from './order/order.module';
+import { FcmModule } from './notifications/notifications.module';
 
 @Module({
-  imports: [AuthModule, MailModule, PrismaModule, TaskHistoryModule, RatingModule, MonitoringModule, AddressModule ,RequestModule, UserModule, SpecailOfferModule, PickupPointModule, ReportModule, UploadModule],
+  imports: [AuthModule, MailModule, PrismaModule, TaskHistoryModule, RatingModule, MonitoringModule, AddressModule ,RequestModule, UserModule, SpecailOfferModule, PickupPointModule, ReportModule, UploadModule, OrderModule, FcmModule],
   controllers: [AppController],
   providers: [AppService],
 })

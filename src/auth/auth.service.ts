@@ -9,7 +9,6 @@ import {
   ActivateDto,
   CreateAuthDto,
   LoginDto,
-  RefreshTokenDto,
   ResetPasswordDto,
   SendOtpDto,
 } from './dto/create-auth.dto';
@@ -21,6 +20,8 @@ import { MailService } from 'src/mail/mail.service';
 import { Request } from 'express';
 import { Session } from '../types/types';
 import { JwtService } from '@nestjs/jwt';
+import { getToken } from "firebase/messaging";
+
 
 totp.options = { step: 600, digits: 5 };
 
@@ -43,14 +44,14 @@ export class AuthService {
     try {
       let foundemail = await this.prisma.user.findUnique({ where: { email } });
       if (foundemail) {
-        return new ConflictException(
+           throw new ConflictException(
           'User already exists with this email address',
         );
       }
 
       let foundphone = await this.prisma.user.findFirst({ where: { phone } });
       if (foundphone) {
-        return new ConflictException('User already exists with this number');
+           throw new ConflictException('User already exists with this number');
       }
 
 
@@ -81,18 +82,18 @@ export class AuthService {
     try {
       let user = await this.prisma.user.findUnique({ where: { email } });
       if (!user) {
-        return new UnauthorizedException('Unauthorized');
+           throw new UnauthorizedException('Unauthorized');
       }
 
       let match = bcrypt.compareSync(password, user.password);
 
 
       if (!match) {
-        return new BadRequestException('Email or password is wrong');
+           throw new BadRequestException('Email or password is wrong');
       }
 
       if (user.status != 'ACTIVE') {
-        return new BadRequestException(
+          throw new BadRequestException(
           'Your account is not active, please activate your account',
         );
       }
@@ -175,7 +176,7 @@ export class AuthService {
     try {
       let user = await this.prisma.user.findUnique({ where: { email } });
       if (!user) {
-        return new UnauthorizedException('Unauthorized');
+       throw new UnauthorizedException('Unauthorized');
       }
 
       let otp = totp.generate(this.otpsecret + email);
@@ -187,7 +188,7 @@ export class AuthService {
 
       return { data: 'OTP sent to your email', otp };
     } catch (error) {
-      return new BadRequestException(error.message);
+     throw new BadRequestException(error.message);
     }
   }
 
@@ -200,7 +201,7 @@ export class AuthService {
       });
 
       if (!updateUser) {
-        return new UnauthorizedException('Unauthorized');
+          throw new UnauthorizedException('Unauthorized');
       }
 
       let accessToken = this.genAccessToken({
@@ -220,7 +221,7 @@ export class AuthService {
     try {
       let isValid = totp.check(otp, this.otpsecret + email);
       if (!isValid) {
-        return new BadRequestException('OTP or email is wrong');
+           throw new BadRequestException('OTP or email is wrong');
       }
 
       let hash = bcrypt.hashSync(new_password, 10);
@@ -234,6 +235,14 @@ export class AuthService {
       return new BadRequestException(error.message);
     }
   }
+
+  async updateFcmToken(userId: string, fcmToken: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { fcmToken },
+    });
+  }
+
 
   genRefreshToken(payload: object) {
     return this.jwtService.sign(payload, {

@@ -12,7 +12,7 @@ export class UserService {
     try {
       let session = await this.checkSession(user.id, req.ip!);
       if (!session) {
-        return new UnauthorizedException('Unauthorized');
+         throw new UnauthorizedException('Unauthorized');
       }
 
       let data = await this.prisma.session.findMany({
@@ -21,7 +21,7 @@ export class UserService {
 
       return { data };
     } catch (error) {
-      return new BadRequestException(error.message);
+        throw new BadRequestException(error.message);
     }
   }
 
@@ -33,7 +33,7 @@ export class UserService {
       });
       return { data: session };
     } catch (error) {
-      return new BadRequestException(error.message);
+       throw new BadRequestException(error.message);
     }
   }
 
@@ -45,12 +45,12 @@ export class UserService {
       });
 
       if (!data.length) {
-        return new NotFoundException('No users found');
+           throw new NotFoundException('No users found');
       }
 
       return { data };
     } catch (error) {
-      return new BadRequestException(error.message);
+       throw new BadRequestException(error.message);
     }
   }
 
@@ -61,12 +61,12 @@ export class UserService {
       });
 
       if (!data) {
-        return new NotFoundException('Not found user');
+          throw new NotFoundException('Not found user');
       }
 
       return { data };
     } catch (error) {
-      return new BadRequestException(error.message);
+       throw new BadRequestException(error.message);
     }
   }
 
@@ -79,7 +79,7 @@ export class UserService {
       });
       return session;
     } catch (error) {
-      return new BadRequestException(error.message);
+         throw new BadRequestException(error.message);
     }
   }
 }

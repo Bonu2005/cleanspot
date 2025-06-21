@@ -17,7 +17,7 @@ export class RatingService {
       const { toUser } = dto
       let findU = await this.prisma.user.findFirst({ where: { id: toUser } })
       if (!findU) {
-        return new NotFoundException("User with this id not found")
+           throw new NotFoundException("User with this id not found")
       }
       return await this.prisma.rating.create({
         data: {
@@ -50,7 +50,7 @@ export class RatingService {
       
       let findU = await this.prisma.user.findFirst({ where: { id: userId } })
       if (!findU) {
-        return new NotFoundException("User with this id not found")
+           throw new NotFoundException("User with this id not found")
       }
       return await this.prisma.rating.findMany({
         where: { toUser: userId },

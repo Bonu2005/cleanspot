@@ -18,7 +18,7 @@ import { Roles } from 'src/authguard/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
 
 @ApiTags('Special Offers')
-@ApiBearerAuth()
+@ApiBearerAuth('access-token')
 @Controller('special-offers')
 @UseGuards(AuthGuard, RolesGuard)
 export class SpecialOfferController {

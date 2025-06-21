@@ -10,7 +10,7 @@ import { RolesGuard } from 'src/authguard/roles.guard';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiTags('TaskHistory')
-@ApiBearerAuth()
+@ApiBearerAuth('access-token')
 @Controller('task-history')
 export class TaskHistoryController {
   constructor(private readonly taskHistoryService: TaskHistoryService) {}

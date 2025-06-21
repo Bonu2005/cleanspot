@@ -19,7 +19,7 @@ import { Roles } from 'src/authguard/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
 
 @ApiTags('Requests')
-@ApiBearerAuth()
+@ApiBearerAuth('access-token')
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('requests')
 export class RequestController {

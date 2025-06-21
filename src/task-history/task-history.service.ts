@@ -18,7 +18,7 @@ export class TaskHistoryService {
       let { requestId } = dto
       let findU = await this.prisma.request.findFirst({ where: { id: requestId } })
       if (!findU) {
-        return new NotFoundException("request with this id not found")
+        throw new NotFoundException("request with this id not found")
       }
       return await this.prisma.taskHistory.create({
         data: {
@@ -70,7 +70,7 @@ export class TaskHistoryService {
 
       let findU = await this.prisma.request.findFirst({ where: { id } })
       if (!findU) {
-        return new NotFoundException("request with this id not found")
+        throw new NotFoundException("request with this id not found")
       }
       return await this.prisma.taskHistory.delete({
         where: { id },

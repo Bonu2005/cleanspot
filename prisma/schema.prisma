@@ -20,7 +20,6 @@ enum Role {
   ADMIN
 }
 
-
 enum StatusUser {
   ACTIVE
   INACTIVE
@@ -29,6 +28,12 @@ enum StatusUser {
 enum RequestType {
   STANDARD
   SPECIAL
+}
+
+enum DriverOfferStatus {
+  PENDING
+  ACCEPTED
+  REGECTED
 }
 
 enum RequestStatus {
@@ -62,6 +67,29 @@ model User {
   ratingsGiven    Rating[]      @relation("RatingGivenByUser")
   ratingsReceived Rating[]      @relation("RatingGivenToUser")
   sessions        Session[]
+  DriverOffer     DriverOffer[]
+  fcmToken        String?
+  currentLat      Float?
+  currentLong     Float?
+  ordersCreated   Order[]       @relation("Client")
+  ordersTaken     Order[]       @relation("Courier")
+}
+
+model Order {
+  id             String    @id @default(uuid())
+  userId         String
+  courierId      String? // null пока не принят
+  locationName   String
+  locationLat    Float
+  locationLong   Float
+  assistantCount Int
+  comment        String?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  completedAt    DateTime?
+
+  user    User  @relation("Client", fields: [userId], references: [id])
+  courier User? @relation("Courier", fields: [courierId], references: [id])
 }
 
 model Profile {
@@ -87,16 +115,27 @@ model Address {
 }
 
 model Request {
-  id          String        @id @default(uuid())
-  userId      String
-  type        RequestType
-  description String
-  status      RequestStatus @default(OPEN)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-
+  id            String        @id @default(uuid())
+  userId        String
+  type          RequestType
+  description   String
+  status        RequestStatus @default(OPEN)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   user          User          @relation(fields: [userId], references: [id])
   taskHistories TaskHistory[]
+  DriverOffer   DriverOffer[]
+}
+
+model DriverOffer {
+  id        String            @id @default(uuid())
+  requestId String
+  driverId  String
+  status    DriverOfferStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+
+  request Request @relation(fields: [requestId], references: [id])
+  driver  User    @relation(fields: [driverId], references: [id])
 }
 
 model TaskHistory {

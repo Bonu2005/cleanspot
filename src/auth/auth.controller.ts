@@ -5,6 +5,7 @@ import {
   RefreshTokenDto,
   ResetPasswordDto,
   SendOtpDto,
+  UpdateFcmTokenDto,
 } from './dto/create-auth.dto';
 import {
   Controller,
@@ -23,10 +24,10 @@ import { Role } from '../common/enums/role.enum';
 import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('Auth')
-@ApiBearerAuth()
+@ApiBearerAuth('access-token')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('register')
   @ApiOperation({ summary: 'Регистрация пользователя' })
@@ -71,5 +72,10 @@ export class AuthController {
   @ApiOperation({ summary: 'Доступ только для админа' })
   superAdmin(@Body() superAdminDto: SendOtpDto) {
     return this.authService.superAdmin(superAdminDto);
+  }
+  @Post('update-fcm-token')
+  @UseGuards(AuthGuard, RolesGuard)
+  updateFcmToken(@Body() dto: UpdateFcmTokenDto, @Req() req) {
+    return this.authService.updateFcmToken(req.user.id, dto.fcmToken);
   }
 }

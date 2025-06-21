@@ -17,7 +17,7 @@ import { Roles } from 'src/authguard/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
 
 @ApiTags('Rating')
-@ApiBearerAuth()
+@ApiBearerAuth('access-token')
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('ratings')
 export class RatingController {

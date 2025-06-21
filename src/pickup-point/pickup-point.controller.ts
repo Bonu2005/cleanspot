@@ -18,7 +18,7 @@ import { Roles } from 'src/authguard/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
 
 @ApiTags('PickupPoint')
-@ApiBearerAuth()
+@ApiBearerAuth('access-token')
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('pickup-point')
 export class PickupPointController {

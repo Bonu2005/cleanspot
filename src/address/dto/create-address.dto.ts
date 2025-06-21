@@ -15,11 +15,11 @@ export class CreateAddressDto {
   @IsNumber()
   @IsOptional()
   ecoRating?: number;
-  @ApiProperty({ example: 85, description: 'Экологический рейтинг (0-100)', required: false })
+  @ApiProperty({ example: 85, description: 'Latitude', required: false })
   @IsNumber()
   @IsOptional()
   lat: number;
-  @ApiProperty({ example: 85, description: 'Экологический рейтинг (0-100)', required: false })
+  @ApiProperty({ example: 85, description: 'langtutude', required: false })
   @IsNumber()
   @IsOptional()
   lng: number;

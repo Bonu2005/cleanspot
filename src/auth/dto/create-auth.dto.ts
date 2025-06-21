@@ -95,3 +95,11 @@ export class ResetPasswordDto {
     @MinLength(4)
     new_password: string;
 }
+
+
+
+export class UpdateFcmTokenDto {
+  @ApiProperty()
+  @IsString()
+  fcmToken: string;
+}
