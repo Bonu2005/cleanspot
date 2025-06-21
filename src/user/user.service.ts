@@ -12,7 +12,7 @@ export class UserService {
     try {
       let session = await this.checkSession(user.id, req.ip!);
       if (!session) {
-         throw new UnauthorizedException('Unauthorized');
+        throw new UnauthorizedException('Unauthorized');
       }
 
       let data = await this.prisma.session.findMany({
@@ -21,7 +21,7 @@ export class UserService {
 
       return { data };
     } catch (error) {
-        throw new BadRequestException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -33,7 +33,7 @@ export class UserService {
       });
       return { data: session };
     } catch (error) {
-       throw new BadRequestException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -45,30 +45,30 @@ export class UserService {
       });
 
       if (!data.length) {
-           throw new NotFoundException('No users found');
+        throw new NotFoundException('No users found');
       }
 
       return { data };
     } catch (error) {
-       throw new BadRequestException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 
-  async findOne(id: string) {
-    try {
-      let data = await this.prisma.user.findUnique({
-        where: { id },
-      });
+  // async findOne(id: string) {
+  //   try {
+  //     let data = await this.prisma.user.findUnique({
+  //       where: { id },
+  //     });
 
-      if (!data) {
-          throw new NotFoundException('Not found user');
-      }
+  //     if (!data) {
+  //       throw new NotFoundException('Not found user');
+  //     }
 
-      return { data };
-    } catch (error) {
-       throw new BadRequestException(error.message);
-    }
-  }
+  //     return { data };
+  //   } catch (error) {
+  //     throw new BadRequestException(error.message);
+  //   }
+  // }
 
 
 
@@ -79,7 +79,27 @@ export class UserService {
       });
       return session;
     } catch (error) {
-         throw new BadRequestException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
+  async getMe(userId: string) {
+    console.log(userId);
+    
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        profile: true,
+        addresses: true,
+        requests: true,
+        taskHistories: true,
+        ratingsGiven: true,
+        ratingsReceived: true,
+        sessions: true,
+        DriverOffer: true,
+        ordersCreated: true,
+        ordersTaken: true,
+      },
+    });
+  }
+
 }

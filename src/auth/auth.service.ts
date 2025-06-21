@@ -20,7 +20,7 @@ import { MailService } from 'src/mail/mail.service';
 import { Request } from 'express';
 import { Session } from '../types/types';
 import { JwtService } from '@nestjs/jwt';
-import { getToken } from "firebase/messaging";
+
 
 
 totp.options = { step: 600, digits: 5 };

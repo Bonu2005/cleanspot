@@ -18,6 +18,7 @@ enum Role {
   CLIENT
   DRIVER
   ADMIN
+  COURIER
 }
 
 enum StatusUser {
